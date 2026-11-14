@@ -1,19 +1,43 @@
 import { describe, it, expect } from "vitest";
-import campaign from "../../src/campaigns/crypte.json";
-import { Game, defaultCharacter } from "../../src/engine/engine.ts";
-import { mulberry32 } from "../../src/engine/rng.ts";
+import crypte from "../../src/campaigns/crypte.json";
+import { bundledCampaigns } from "../../src/catalog/bundled.ts";
 import { validateCampaign } from "../../src/engine/validate.ts";
 import type { Campaign } from "../../src/engine/types.ts";
+import { playRandom } from "./helpers.ts";
 
-const c = campaign as Campaign;
-const clone = (): Campaign => structuredClone(c);
-
-describe("validation statique de la campagne", () => {
-  it("ne contient aucune erreur", () => {
-    expect(validateCampaign(c).errors).toEqual([]);
+// Ces tests s'appliquent AUTOMATIQUEMENT à chaque campagne présente dans src/campaigns/.
+// Ajouter une aventure = elle est testée sans écrire une ligne de test.
+describe.each(Object.entries(bundledCampaigns))("campagne %s", (_path, campaign) => {
+  it("est valide (analyse statique du graphe)", () => {
+    expect(validateCampaign(campaign).errors).toEqual([]);
   });
 
-  // "Tester le testeur" : on casse volontairement la campagne
+  it("1000 parties aléatoires atteignent toutes une fin (ni blocage ni boucle)", () => {
+    for (let seed = 0; seed < 1000; seed++) {
+      const { game, steps, blocked } = playRandom(campaign, seed);
+      expect(blocked, `seed ${seed} bloquée`).toBe(false);
+      expect(game.isOver, `seed ${seed} non terminée après ${steps} pas`).toBe(true);
+    }
+  });
+
+  it("toutes les fins sont atteintes au moins une fois", () => {
+    const reached = new Set<string>();
+    for (let seed = 0; seed < 1000; seed++) reached.add(playRandom(campaign, seed).game.state.sceneId);
+    const endings = Object.keys(campaign.scenes).filter((id) => campaign.scenes[id].ending);
+    expect([...reached].sort()).toEqual(endings.sort());
+  });
+
+  it("les PV ne descendent jamais sous 0", () => {
+    for (let seed = 0; seed < 200; seed++) {
+      expect(playRandom(campaign, seed).game.state.character.hp).toBeGreaterThanOrEqual(0);
+    }
+  });
+});
+
+// "Tester le testeur" : on casse volontairement une campagne et on vérifie que le validateur réagit.
+describe("validateur (tests de mutation)", () => {
+  const clone = (): Campaign => structuredClone(crypte as Campaign);
+
   it("détecte une destination inexistante", () => {
     const bad = clone();
     bad.scenes.start.choices![0].to = "nulle_part";
@@ -37,39 +61,9 @@ describe("validation statique de la campagne", () => {
     delete bad.scenes.torche.onEnter;
     expect(validateCampaign(bad).errors.join()).toMatch(/objet "torche"/);
   });
-});
 
-describe("parcours aléatoires (fuzzing avec seed)", () => {
-  function playRandom(seed: number) {
-    const pickRng = mulberry32(seed + 10_000);
-    const g = new Game(c, defaultCharacter, mulberry32(seed));
-    let steps = 0;
-    while (!g.isOver && steps < 50) {
-      const options = g.availableChoices();
-      expect(options.length).toBeGreaterThan(0); // jamais bloqué
-      g.choose(options[Math.floor(pickRng() * options.length)].index);
-      steps++;
-    }
-    return { g, steps };
-  }
-
-  it("1000 parties aléatoires atteignent toutes une fin (pas de boucle infinie)", () => {
-    for (let seed = 0; seed < 1000; seed++) {
-      const { g, steps } = playRandom(seed);
-      expect(g.isOver, `seed ${seed} bloquée après ${steps} pas`).toBe(true);
-    }
-  });
-
-  it("toutes les fins sont atteintes au moins une fois (couverture)", () => {
-    const reached = new Set<string>();
-    for (let seed = 0; seed < 1000; seed++) reached.add(playRandom(seed).g.state.sceneId);
-    const endings = Object.keys(c.scenes).filter((id) => c.scenes[id].ending);
-    expect([...reached].sort()).toEqual(endings.sort());
-  });
-
-  it("le personnage ne descend jamais sous 0 PV", () => {
-    for (let seed = 0; seed < 200; seed++) {
-      expect(playRandom(seed).g.state.character.hp).toBeGreaterThanOrEqual(0);
-    }
+  it("détecte une version de schéma non supportée", () => {
+    const bad = { ...clone(), schemaVersion: 2 } as unknown as Campaign;
+    expect(validateCampaign(bad).errors.join()).toMatch(/schemaVersion/);
   });
 });

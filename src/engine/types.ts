@@ -40,8 +40,12 @@ export interface Scene {
 }
 
 export interface Campaign {
+  /** Version du format de fichier : permettra de migrer les anciennes campagnes. */
+  schemaVersion: 1;
+  /** Identifiant unique (doit correspondre au nom du fichier .json). */
   id: string;
   title: string;
+  description?: string;
   start: string;
   deathScene: string;
   scenes: Record<string, Scene>;

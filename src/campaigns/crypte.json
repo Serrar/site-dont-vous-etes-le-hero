@@ -1,6 +1,8 @@
 {
+  "schemaVersion": 1,
   "id": "crypte",
   "title": "La Crypte oubliée",
+  "description": "Une crypte, un gardien de pierre et un trésor. Classique et court : 3 fins.",
   "start": "start",
   "deathScene": "mort",
   "scenes": {

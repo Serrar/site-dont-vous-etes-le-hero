@@ -3,7 +3,8 @@ import { test, expect } from "@playwright/test";
 // ?seed=N rend les jets de dés déterministes : indispensable pour des tests e2e stables.
 
 test("chemin de la torche → victoire (sans aucun jet de dé)", async ({ page }) => {
-  await page.goto("/?seed=1");
+  await page.goto("/?campaign=crypte&seed=1");
+  await expect(page.getByTestId("restart")).toBeHidden(); // pas de bouton « Rejouer » avant la fin
   await page.getByRole("button", { name: "Entrer par la porte principale" }).click();
   await page.getByRole("button", { name: "Ramasser la torche" }).click();
   await expect(page.getByTestId("sheet")).toContainText("torche");
@@ -16,7 +17,7 @@ test("chemin de la torche → victoire (sans aucun jet de dé)", async ({ page }
 });
 
 test("sans torche, le choix de l'escalier est masqué", async ({ page }) => {
-  await page.goto("/?seed=1");
+  await page.goto("/?campaign=crypte&seed=1");
   await page.getByRole("button", { name: "Entrer par la porte principale" }).click();
   await page.getByRole("button", { name: "Avancer dans le noir" }).click();
   await expect(page.getByTestId("sheet")).toContainText("PV 8");
@@ -25,7 +26,7 @@ test("sans torche, le choix de l'escalier est masqué", async ({ page }) => {
 });
 
 test("le bouton Rejouer réinitialise la partie", async ({ page }) => {
-  await page.goto("/?seed=1");
+  await page.goto("/?campaign=crypte&seed=1");
   await page.getByRole("button", { name: "Entrer par la porte principale" }).click();
   await page.getByRole("button", { name: "Ramasser la torche" }).click();
   await page.getByRole("button", { name: "Poursuivre dans le couloir" }).click();
@@ -40,7 +41,7 @@ test("le bouton Rejouer réinitialise la partie", async ({ page }) => {
 
 test("une partie aléatoire finit toujours sur un écran de fin (30 seeds)", async ({ page }) => {
   for (let seed = 0; seed < 30; seed++) {
-    await page.goto(`/?seed=${seed}`);
+    await page.goto(`/?campaign=crypte&seed=${seed}`);
     for (let step = 0; step < 30; step++) {
       if (await page.getByTestId("ending").isVisible()) break;
       const buttons = page.locator("#choices button");

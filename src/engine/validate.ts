@@ -20,6 +20,10 @@ export function validateCampaign(c: Campaign): Report {
   const warnings: string[] = [];
   const ids = Object.keys(c.scenes);
 
+  if (c.schemaVersion !== 1) errors.push(`schemaVersion non supportée : ${String(c.schemaVersion)}`);
+  if (!c.id) errors.push("Identifiant (id) manquant");
+  if (!c.title) errors.push("Titre (title) manquant");
+
   if (!c.scenes[c.start]) errors.push(`Scène de départ introuvable : ${c.start}`);
   if (!c.scenes[c.deathScene]) errors.push(`Scène de mort introuvable : ${c.deathScene}`);
 

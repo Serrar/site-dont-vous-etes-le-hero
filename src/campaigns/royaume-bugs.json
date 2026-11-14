@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "id": "royaume-bugs",
+  "title": "Le Royaume maudit des Bugs",
+  "description": "Tu es Grand Testeur du royaume de Prodland. Un bug fantôme hante le donjon de la Préprod. Humour, logs et 3 fins.",
+  "start": "start",
+  "deathScene": "mort",
+  "scenes": {
+    "start": {
+      "text": "Le roi te convoque : « Grand Testeur, un bug menace Prodland ! » Il te tend le ticket #404, couvert de taches de café.",
+      "choices": [
+        { "text": "Lire le ticket attentivement", "to": "ticket" },
+        { "text": "Foncer au donjon sans lire", "to": "donjon_porte" }
+      ]
+    },
+    "ticket": {
+      "text": "Le ticket décrit des étapes de reproduction claires : un bug fantôme apparaît quand on ouvre la salle des logs. Tu gardes précieusement ces notes.",
+      "onEnter": [{ "type": "addItem", "item": "ticket_lu" }],
+      "choices": [{ "text": "Partir vers le donjon", "to": "donjon_porte" }]
+    },
+    "donjon_porte": {
+      "text": "La porte du donjon de la Préprod est verrouillée par un captcha géant : « Sélectionnez toutes les cases contenant un dragon ». Une grille d'égout est ouverte sur le côté.",
+      "choices": [
+        { "text": "Résoudre le captcha", "test": { "stat": "habilete", "difficulty": 8, "onSuccess": "couloir_logs", "onFailure": "alarme" } },
+        { "text": "Passer par les égouts", "to": "egouts" }
+      ]
+    },
+    "alarme": {
+      "text": "Le captcha hurle : « ROBOT DÉTECTÉ ». Une décharge te traverse avant que la porte ne cède.",
+      "onEnter": [{ "type": "hp", "delta": -2 }],
+      "choices": [{ "text": "Rejoindre le couloir des logs", "to": "couloir_logs" }]
+    },
+    "egouts": {
+      "text": "Dans les égouts, tu glisses sur un tas de vieux fichiers temporaires. Tu y trouves un badge administrateur oublié.",
+      "onEnter": [
+        { "type": "hp", "delta": -1 },
+        { "type": "addItem", "item": "badge_admin" }
+      ],
+      "choices": [{ "text": "Remonter vers le couloir des logs", "to": "couloir_logs" }]
+    },
+    "couloir_logs": {
+      "text": "Un couloir tapissé de lignes de logs qui défilent. Au bout : une salle des serveurs fermée par badge et, dans l'ombre, une silhouette qui clignote.",
+      "choices": [
+        { "text": "Analyser les logs", "to": "logs_analyse", "condition": { "type": "item", "item": "ticket_lu" } },
+        { "text": "Ouvrir la salle des serveurs", "to": "serveurs", "condition": { "type": "item", "item": "badge_admin" } },
+        { "text": "Affronter le Bug Fantôme", "to": "boss_fantome" }
+      ]
+    },
+    "logs_analyse": {
+      "text": "Grâce aux étapes du ticket, tu repères la ligne exacte où le bug apparaît : une régression introduite hier soir. Tu notes un indice solide.",
+      "onEnter": [{ "type": "addItem", "item": "indice_regression" }],
+      "choices": [{ "text": "Affronter le Bug Fantôme", "to": "boss_fantome" }]
+    },
+    "serveurs": {
+      "text": "La salle des serveurs ronronne. Un gros bouton rouge « REDÉMARRER EN PRODUCTION » te tend les bras. Le Bug Fantôme clignote derrière une baie.",
+      "choices": [
+        { "text": "Redémarrer en production", "test": { "stat": "chance", "difficulty": 7, "onSuccess": "fin_hotfix", "onFailure": "mort" } },
+        { "text": "Chercher le Bug Fantôme parmi les serveurs", "to": "boss_fantome" }
+      ]
+    },
+    "boss_fantome": {
+      "text": "Le Bug Fantôme se matérialise : « Chez moi, ça marche ! » dit-il en ricanant. Il disparaît dès qu'on tente de le reproduire.",
+      "choices": [
+        { "text": "Rédiger un cas de test précis", "to": "victoire", "condition": { "type": "item", "item": "indice_regression" }, "effects": [{ "type": "removeItem", "item": "indice_regression" }] },
+        { "text": "Exploiter une faille de logique", "to": "victoire", "condition": { "type": "stat", "stat": "habilete", "min": 5 } },
+        { "text": "Frapper à l'aveugle", "test": { "stat": "force", "difficulty": 8, "onSuccess": "fin_hotfix", "onFailure": "mort" } }
+      ]
+    },
+    "victoire": {
+      "text": "Le bug est reproduit, isolé, corrigé, et un test de non-régression garantit qu'il ne reviendra pas. Prodland te fait roi des testeurs.",
+      "ending": { "type": "victory", "title": "Fin : le bug est corrigé proprement" }
+    },
+    "fin_hotfix": {
+      "text": "Tu règles le problème à coups de correctif sauvage en production. Ça tient... jusqu'à lundi.",
+      "ending": { "type": "neutral", "title": "Fin : le hotfix du vendredi soir" }
+    },
+    "mort": {
+      "text": "Le Bug Fantôme t'engloutit dans une boucle infinie. On retrouvera ton badge dans les logs.",
+      "ending": { "type": "defeat", "title": "Fin : la boucle infinie" }
+    }
+  }
+}

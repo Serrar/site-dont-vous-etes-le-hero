@@ -5,20 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Gamebook</title>
     <style>
+      [hidden] { display: none !important; }
       body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
       button { display: block; margin: .5rem 0; padding: .6rem 1rem; cursor: pointer; }
+      #campaign-list button { width: 100%; text-align: left; }
+      #campaign-list span { font-size: .9rem; opacity: .8; }
       #sheet { background: #f3f3f3; padding: .5rem 1rem; border-radius: 6px; }
       @media (prefers-color-scheme: dark) { body { background: #1b1b1b; color: #eee; } #sheet { background: #2a2a2a; } }
     </style>
   </head>
   <body>
-    <h1 id="title"></h1>
-    <div id="sheet" data-testid="sheet"></div>
-    <p id="scene-text" data-testid="scene-text"></p>
-    <p id="roll" data-testid="roll"></p>
-    <div id="choices"></div>
-    <h2 id="ending" data-testid="ending" hidden></h2>
-    <button id="restart" data-testid="restart" hidden>Rejouer</button>
+    <section id="menu" data-testid="menu">
+      <h1>Choisis ton aventure</h1>
+      <div id="campaign-list" data-testid="campaign-list"></div>
+    </section>
+
+    <section id="game" hidden>
+      <button id="back" data-testid="back-to-menu">← Changer d'aventure</button>
+      <h1 id="title" data-testid="campaign-title"></h1>
+      <div id="sheet" data-testid="sheet"></div>
+      <p id="scene-text" data-testid="scene-text"></p>
+      <p id="roll" data-testid="roll"></p>
+      <div id="choices"></div>
+      <h2 id="ending" data-testid="ending" hidden></h2>
+      <button id="restart" data-testid="restart" hidden>Rejouer</button>
+    </section>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
