@@ -1,0 +1,63 @@
+{
+  "id": "crypte",
+  "title": "La Crypte oubliée",
+  "start": "start",
+  "deathScene": "mort",
+  "scenes": {
+    "start": {
+      "text": "Tu te tiens devant l'entrée d'une crypte oubliée. Une porte massive est entrouverte ; sur le côté, la pierre semble moins bien jointe.",
+      "choices": [
+        { "text": "Entrer par la porte principale", "to": "hall" },
+        { "text": "Chercher un passage secret", "test": { "stat": "chance", "difficulty": 6, "onSuccess": "passage", "onFailure": "hall" } }
+      ]
+    },
+    "hall": {
+      "text": "Un hall poussiéreux. Une torche pend encore à un mur. Au fond, un couloir plonge dans le noir.",
+      "choices": [
+        { "text": "Ramasser la torche", "to": "torche" },
+        { "text": "Avancer dans le noir", "to": "couloir", "effects": [{ "type": "hp", "delta": -2 }] }
+      ]
+    },
+    "torche": {
+      "text": "Tu allumes la torche. Les murs révèlent d'anciennes gravures.",
+      "onEnter": [{ "type": "addItem", "item": "torche" }],
+      "choices": [{ "text": "Poursuivre dans le couloir", "to": "couloir" }]
+    },
+    "passage": {
+      "text": "Derrière la pierre, un passage étroit. Dans une niche, une clé ancienne.",
+      "onEnter": [{ "type": "addItem", "item": "cle_ancienne" }],
+      "choices": [{ "text": "Rejoindre le couloir", "to": "couloir" }]
+    },
+    "couloir": {
+      "text": "Un long couloir. Un escalier descend dans l'ombre, une porte scellée barre le fond, et un gardien de pierre veille.",
+      "choices": [
+        { "text": "Descendre l'escalier avec ta torche", "to": "escalier", "condition": { "type": "item", "item": "torche" } },
+        { "text": "Ouvrir la porte scellée", "to": "tresor", "condition": { "type": "item", "item": "cle_ancienne" } },
+        { "text": "Affronter le gardien", "to": "garde" }
+      ]
+    },
+    "escalier": {
+      "text": "Au bas de l'escalier, un coffre repose sur un autel.",
+      "choices": [{ "text": "Ouvrir le coffre", "to": "tresor" }]
+    },
+    "garde": {
+      "text": "Le gardien de pierre s'anime et barre la route.",
+      "choices": [
+        { "text": "Attaquer le gardien", "test": { "stat": "force", "difficulty": 8, "onSuccess": "tresor", "onFailure": "mort" } },
+        { "text": "Te faufiler derrière lui", "test": { "stat": "habilete", "difficulty": 9, "onSuccess": "fuite", "onFailure": "mort" } }
+      ]
+    },
+    "tresor": {
+      "text": "Le trésor est à toi. Tu quittes la crypte, riche et vivant.",
+      "ending": { "type": "victory", "title": "Fin : le trésor" }
+    },
+    "fuite": {
+      "text": "Tu t'échappes de justesse, les mains vides mais sain et sauf.",
+      "ending": { "type": "neutral", "title": "Fin : la fuite" }
+    },
+    "mort": {
+      "text": "Tes forces t'abandonnent. La crypte garde un aventurier de plus.",
+      "ending": { "type": "defeat", "title": "Fin : la mort" }
+    }
+  }
+}
