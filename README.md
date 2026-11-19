@@ -46,11 +46,11 @@ Ce que ce mode de travail m'apprend (et que je documente ici) :
 
 Quelques défauts réels attrapés ou signalés au fil du projet (voir `CHANGELOG.md`) :
 
-- le bouton « Rejouer » restait visible en cours de partie, parce qu'une règle CSS écrasait l'attribut `hidden` ;
+- le bouton « Rejouer » restait visible en cours de partie, parce qu'une règle CSS écrasait l'attribut `hidden` 
 - un test de disposition de l'arbre a révélé qu'un simple lien transversal entre deux scènes était dessiné comme un retour
-  en arrière : le classement des scènes a été revu (chemin le plus long, vrais cycles détectés) ;
+  en arrière : le classement des scènes a été revu (chemin le plus long, vrais cycles détectés) 
 - une aventure vierge créée dans l'éditeur devait être valide dès sa création, ce qui a conduit à corriger la règle
-  d'accessibilité de la scène de mort.
+  d'accessibilité de la scène de mort
 
 Toute nouvelle aventure déposée dans `src/campaigns/` est **testée automatiquement**, sans écrire un seul test.
 
@@ -76,18 +76,18 @@ traque un bug fantôme).
 
 **L'atelier du scribe** (éditeur d'aventures), accessible depuis le menu principal dans un bloc visuellement séparé :
 
-- création d'une aventure (déjà jouable) ou duplication d'une aventure existante ;
+- création d'une aventure (déjà jouable) ou duplication d'une aventure existante 
 - **arbre de l'histoire** : chaque scène est une boîte, chaque choix une flèche (tirets = jet de dés, pointillés = choix
-  conditionnel, rouge pointillé = scène inaccessible, ⚠ = cul-de-sac) ; un clic sur une boîte ouvre la scène ;
-- formulaires pour le texte, l'illustration, les effets, les choix (destination directe ou jet de dés, conditions) ;
-  « ➕ Créer une nouvelle scène » depuis une liste de destinations fait grandir l'arbre ;
-- **vérifications en direct**, cliquables, qui mènent à la scène concernée ;
+  conditionnel, rouge pointillé = scène inaccessible, ⚠ = cul-de-sac) ; un clic sur une boîte ouvre la scène 
+- formulaires pour le texte, l'illustration, les effets, les choix (destination directe ou jet de dés, conditions) 
+  « ➕ Créer une nouvelle scène » depuis une liste de destinations fait grandir l'arbre 
+- **vérifications en direct**, cliquables, qui mènent à la scène concernée 
 - **enregistrement dans le navigateur** (localStorage) et reprise plus tard ; avertissement si l'on quitte avec des modifications
-  non enregistrées ;
-- **test de l'aventure en cours** depuis l'éditeur ; **export / import** de fichiers `.json`.
+  non enregistrées
+- **test de l'aventure en cours** depuis l'éditeur ; **export / import** de fichiers `.json`
 
-> Les brouillons dépendent du navigateur et de l'adresse (localhost:5173) : vider les données du navigateur les efface.
-> L'export permet de les conserver ; déposé dans `src/campaigns/`, le fichier devient une aventure permanente du projet.
+> Les brouillons dépendent du navigateur et de l'adresse (localhost:5173) : vider les données du navigateur les efface
+> L'export permet de les conserver ; déposé dans `src/campaigns/`, le fichier devient une aventure permanente du projet
 
 ## Où est quoi
 
@@ -132,15 +132,16 @@ réduire les mouvements.
 
 Limites assumées :
 
-- pas encore d'intégration continue (GitHub Actions) ni de mesure de couverture de code ;
-- tests écrits avec le même LLM que le code (voir plus haut) ;
-- brouillons stockés uniquement dans le navigateur, pas d'annulation (Ctrl+Z) dans l'éditeur ;
-- arbre calculé automatiquement : les boîtes ne se déplacent pas à la main.
+- besoin de prise de connaissance du code et des tests : cout d'entrée
+- pas encore d'intégration continue (GitHub Actions) ni de mesure de couverture de code 
+- tests écrits avec le même LLM que le code (voir plus haut) 
+- brouillons stockés uniquement dans le navigateur, pas d'annulation (Ctrl+Z) dans l'éditeur 
+- arbre calculé automatiquement : les boîtes ne se déplacent pas à la main
 
 Pistes :
 
-- workflow GitHub Actions (`npm test`, `npm run validate`, `npm run e2e`) et rapport de couverture ;
+- workflow GitHub Actions (`npm test`, `npm run validate`, `npm run e2e`) et rapport de couverture
 - **IA comme outil de test** : faire générer des cas de test ou explorer l'arbre par un LLM, puis trier les propositions
-  (relire, garder, rejeter) ; comparer avec les tests existants pour mesurer ce qu'ils apportent réellement ;
-- feuille de personnage conservée d'une aventure à l'autre, avec test de la migration entre deux versions de sauvegarde ;
-- Page Object et traces Playwright pour les tests de bout en bout.
+  (relire, garder, rejeter) ; comparer avec les tests existants pour mesurer ce qu'ils apportent réellement
+- feuille de personnage conservée d'une aventure à l'autre, avec test de la migration entre deux versions de sauvegarde 
+- Page Object et traces Playwright pour les tests de bout en bout
