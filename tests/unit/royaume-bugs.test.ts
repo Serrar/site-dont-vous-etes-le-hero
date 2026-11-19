@@ -1,3 +1,8 @@
+// ============================================================================
+// Tests propres à l'aventure « Le Royaume maudit des Bugs » : scénarios précis
+// (chemin sans dé, objets, conditions de caractéristique...).
+// ============================================================================
+
 import { describe, it, expect } from "vitest";
 import bugs from "../../src/campaigns/royaume-bugs.json";
 import { Game, defaultCharacter } from "../../src/engine/engine.ts";

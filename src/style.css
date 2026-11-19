@@ -1,0 +1,291 @@
+/* ============================================================================
+   style.css : toute l'apparence du projet.
+   Notions utiles si tu viens du JS :
+   - `--nom: valeur` (dans :root) déclare une « variable CSS », utilisée ensuite avec var(--nom).
+     Changer une variable change l'ambiance de tout le site.
+   - Les illustrations SVG utilisent les MÊMES variables (palette commune).
+   ============================================================================ */
+
+/* ---------- Palette (partagée par l'interface ET les illustrations SVG) ---------- */
+:root {
+  --ink: #3b2a1a;
+  --dark: #241810;
+  --soft: #9a7b52;
+  --stone: #8b7a64;
+  --sand: #e9d6a6;
+  --glow: #e08a2e;
+  --gold: #d1a935;
+  --moss: #5f7040;
+  --ghost: #3f8f80;
+  --blood: #8a2a1f;
+  --wash-ochre: #c9a15a;
+  --wash-red: #a23a2a;
+  --wash-green: #5f7f5a;
+  --wash-teal: #4f8f80;
+  --paper-light: #f1e2bd;
+  --paper-mid: #e4cf9d;
+  --paper-dark: #d6bb82;
+  --serif: Georgia, "Palatino Linotype", Palatino, "Book Antiqua", serif;
+}
+
+[hidden] { display: none !important; }
+
+/* ---------- Ambiance générale : table de bois sombre, lueur de bougie ---------- */
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--serif);
+  color: #f0e2c0;
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(224, 138, 46, 0.22), transparent 55%),
+    radial-gradient(ellipse at center, #34261a 0%, #1a1109 80%);
+  background-attachment: fixed;
+}
+main { max-width: 660px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+h1 {
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  text-align: center;
+  color: #e6c77a;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  margin: 0.5rem 0 1rem;
+}
+h1::before, h1::after { content: "❦"; font-size: 0.7em; opacity: 0.6; margin: 0 0.6em; }
+
+/* ---------- Parchemin : grain + dégradé + bords brûlés ---------- */
+.parchment, button.parchment, #campaign-list button, #choices button, #restart, #back {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .32 0 0 0 0 .18 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(135deg, var(--paper-light), var(--paper-mid) 60%, var(--paper-dark));
+  color: var(--ink);
+  border: 1px solid #8a6a3b;
+  border-radius: 7px 12px 8px 13px / 12px 7px 13px 8px;
+  box-shadow: inset 0 0 16px rgba(120, 80, 30, 0.5), 0 3px 6px rgba(0, 0, 0, 0.45);
+}
+
+button {
+  display: block;
+  width: 100%;
+  margin: 0.6rem 0;
+  padding: 0.7rem 1rem;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+#choices button::before { content: "❧"; color: var(--blood); margin-right: 0.6rem; }
+button:hover { transform: translateY(-1px) rotate(-0.15deg); filter: brightness(1.06); box-shadow: inset 0 0 16px rgba(120, 80, 30, 0.5), 0 6px 10px rgba(0, 0, 0, 0.5); }
+button:active { transform: translateY(1px); filter: brightness(0.95); box-shadow: inset 0 0 20px rgba(120, 80, 30, 0.65), 0 1px 2px rgba(0, 0, 0, 0.5); }
+button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+#back, #restart { width: auto; display: inline-block; font-size: 0.9rem; padding: 0.4rem 0.9rem; }
+#restart { display: block; margin: 1rem auto; text-align: center; }
+#campaign-list button { padding: 1rem 1.2rem; }
+#campaign-list strong { font-size: 1.15rem; font-variant: small-caps; letter-spacing: 0.04em; }
+#campaign-list span { font-size: 0.92rem; opacity: 0.85; font-style: italic; }
+
+/* ---------- Illustration ---------- */
+#illustration {
+  margin: 0 0 1rem;
+  padding: 6px;
+  border-radius: 7px 12px 8px 13px / 12px 7px 13px 8px;
+  background: linear-gradient(135deg, var(--paper-light), var(--paper-dark));
+  box-shadow: inset 0 0 12px rgba(120, 80, 30, 0.5), 0 4px 10px rgba(0, 0, 0, 0.55);
+  animation: fade 0.5s ease both;
+}
+#illustration svg { display: block; width: 100%; height: auto; aspect-ratio: 2 / 1; border-radius: 4px; background: radial-gradient(ellipse at center, #f1e4bf 40%, #dcc48c 100%); box-shadow: inset 0 0 22px rgba(120, 80, 30, 0.5); }
+@keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* Classes des illustrations « grimoire » (trait d'encre, hachures, lavis) */
+svg .ik { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+svg .ik2 { fill: none; stroke: var(--ink); stroke-width: 1; opacity: 0.45; stroke-linecap: round; stroke-linejoin: round; }
+svg .bk { fill: var(--dark); stroke: none; }
+svg .hh { stroke: none; }
+svg .sd { fill: var(--sand); stroke: none; }
+svg .gd { fill: var(--gold); opacity: 0.85; stroke: none; }
+svg .wo { fill: var(--wash-ochre); opacity: 0.35; stroke: none; }
+svg .wr { fill: var(--wash-red); opacity: 0.4; stroke: none; }
+svg .wg { fill: var(--wash-green); opacity: 0.45; stroke: none; }
+svg .wt { fill: var(--wash-teal); opacity: 0.8; stroke: none; }
+svg .kl { fill: none; stroke: var(--gold); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+svg .gl { fill: none; stroke: var(--ghost); stroke-width: 2.4; stroke-linecap: round; }
+svg .err { stroke: var(--blood); }
+svg .bn { fill: none; stroke: var(--ink); stroke-width: 11; stroke-linecap: round; }
+svg .bn2 { fill: none; stroke: var(--sand); stroke-width: 7; stroke-linecap: round; }
+svg .lr { fill: var(--blood); stroke: var(--ink); stroke-width: 1; }
+svg .lg { fill: var(--moss); stroke: var(--ink); stroke-width: 1; }
+svg .ly { fill: var(--gold); stroke: var(--ink); stroke-width: 1; }
+svg .flicker { animation: flicker 2.4s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center bottom; }
+@keyframes flicker { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.03, 0.97); } 100% { opacity: 0.95; transform: scale(0.98, 1.04); } }
+
+/* ---------- Texte, fiche de personnage, résultat ---------- */
+#sheet {
+  font-size: 0.85rem;
+  padding: 0.5rem 0.9rem;
+  margin-bottom: 1rem;
+  color: #e6c77a;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(209, 169, 53, 0.35);
+  border-radius: 6px;
+}
+#scene-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  padding: 1rem 1.2rem;
+  border-radius: 7px 12px 8px 13px / 12px 7px 13px 8px;
+  background: linear-gradient(135deg, var(--paper-light), var(--paper-mid) 60%, var(--paper-dark));
+  color: var(--ink);
+  box-shadow: inset 0 0 18px rgba(120, 80, 30, 0.5), 0 3px 8px rgba(0, 0, 0, 0.5);
+}
+#scene-text::first-letter { font-size: 2.3em; float: left; line-height: 0.9; padding: 0.05em 0.12em 0 0; color: var(--blood); }
+#roll { min-height: 1.4em; font-style: italic; color: #e6c77a; text-align: center; }
+#ending {
+  text-align: center;
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+  color: #e6c77a;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  margin: 1.2rem 0 0.4rem;
+}
+#ending[data-type="defeat"] { color: #d9806f; }
+#ending[data-type="victory"] { color: #f0d27a; }
+
+@media (prefers-reduced-motion: reduce) {
+  #illustration, svg .flicker { animation: none; }
+  button { transition: none; }
+  button:hover { transform: none; }
+}
+
+/* ============================================================================
+   MENU PRINCIPAL : aventures, puis atelier (volontairement d'un autre style)
+   ============================================================================ */
+main.wide { max-width: 1180px; }
+
+.menu-subtitle { margin: 1.6rem 0 0.4rem; color: #e6c77a; font-variant: small-caps; letter-spacing: 0.05em; }
+.badge {
+  display: inline-block; margin-left: 0.6rem; padding: 0 0.5rem; font-size: 0.72rem; font-style: normal;
+  letter-spacing: 0.05em; text-transform: uppercase; color: #f1e2bd; background: var(--moss);
+  border-radius: 3px; vertical-align: middle;
+}
+
+/* Séparateur orné entre les aventures et l'atelier */
+.divider { display: flex; align-items: center; gap: 1rem; margin: 2.2rem 0 1.4rem; color: #e6c77a; opacity: 0.75; }
+.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #e6c77a, transparent); }
+
+/* L'atelier : cuir sombre et or, pour ne pas le confondre avec les parchemins de jeu */
+.workshop {
+  text-align: center; padding: 1.1rem 1.2rem 1.3rem; border: 2px solid rgba(209, 169, 53, 0.6); border-radius: 6px;
+  background: radial-gradient(ellipse at top, #3a2a1a, #1a1109 85%);
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.65), 0 4px 12px rgba(0, 0, 0, 0.55);
+}
+.workshop h2 { margin: 0.2rem 0; color: #e6c77a; font-variant: small-caps; letter-spacing: 0.06em; }
+.workshop p { margin: 0.2rem 0 0.9rem; font-style: italic; opacity: 0.85; }
+#open-editor {
+  display: inline-block; width: auto; margin: 0; padding: 0.7rem 1.5rem; font-weight: bold; text-align: center; color: #2a1a0a;
+  background: linear-gradient(#d4ac52, #a47c2d); border: 1px solid #6d4f17; border-radius: 4px;
+  box-shadow: 0 2px 0 #6d4f17, 0 6px 10px rgba(0, 0, 0, 0.5);
+}
+#open-editor:hover { filter: brightness(1.08); }
+
+/* ============================================================================
+   ATELIER (éditeur)
+   ============================================================================ */
+#editor h1 { margin-top: 1rem; }
+#editor h2 { margin: 0 0 0.6rem; font-size: 1.15rem; }
+#editor h3 { margin: 1rem 0 0.3rem; font-size: 1rem; }
+
+/* Boutons de l'atelier : parchemin compact */
+.btn {
+  display: inline-block; width: auto; margin: 0.15rem 0.25rem 0.15rem 0; padding: 0.4rem 0.8rem; font-size: 0.9rem; text-align: center;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .32 0 0 0 0 .18 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(135deg, var(--paper-light), var(--paper-mid) 60%, var(--paper-dark));
+  color: var(--ink); border: 1px solid #8a6a3b; border-radius: 6px; box-shadow: inset 0 0 10px rgba(120, 80, 30, 0.45), 0 2px 4px rgba(0, 0, 0, 0.45);
+}
+.btn:disabled { opacity: 0.4; cursor: default; transform: none; filter: none; }
+.btn-icon { padding: 0.2rem 0.55rem; }
+.btn-danger { color: var(--blood); }
+button.link { display: inline; width: auto; margin: 0; padding: 0; background: none; border: 0; box-shadow: none; color: inherit; text-decoration: underline dotted; text-align: left; font: inherit; cursor: pointer; }
+button.link:hover { transform: none; filter: none; box-shadow: none; text-decoration: underline; }
+
+/* Panneaux parchemin */
+.ed-panel {
+  margin: 0 0 1rem; padding: 0.9rem 1.1rem; color: var(--ink); border-radius: 7px 12px 8px 13px / 12px 7px 13px 8px;
+  background: linear-gradient(135deg, var(--paper-light), var(--paper-mid) 60%, var(--paper-dark));
+  box-shadow: inset 0 0 18px rgba(120, 80, 30, 0.5), 0 3px 8px rgba(0, 0, 0, 0.5);
+}
+details.ed-panel > summary { cursor: pointer; font-weight: bold; font-variant: small-caps; letter-spacing: 0.04em; font-size: 1.05rem; }
+details.ed-panel[open] > summary { margin-bottom: 0.6rem; }
+
+.ed-topbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem; margin: 0.8rem 0 0.4rem; }
+.ed-title { font-size: 1.3rem; color: #e6c77a; font-variant: small-caps; letter-spacing: 0.04em; }
+.ed-status { font-size: 0.85rem; color: #e6c77a; opacity: 0.9; }
+.ed-status[data-dirty="true"] { color: #f0b07a; }
+.ed-actions { margin-left: auto; }
+.ed-message { min-height: 1.4em; margin: 0.2rem 0 0.8rem; font-style: italic; color: #e6c77a; }
+.ed-message[data-kind="error"] { color: #f0a090; font-style: normal; font-weight: bold; }
+.ed-hint, .ed-legend { font-size: 0.85rem; opacity: 0.8; margin: 0.3rem 0; }
+.ed-legend { line-height: 1.5; }
+
+.ed-grid { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 980px) { .ed-grid { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } }
+
+.ed-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.ed-row > * { flex: 0 1 auto; }
+.ed-row > .grow, .ed-row > input, .ed-row > select, .ed-row > .ed-field { flex: 1 1 8rem; }
+.ed-item { padding: 0.5rem 0; border-bottom: 1px dashed rgba(59, 42, 26, 0.35); }
+.ed-item:last-child { border-bottom: 0; }
+.ed-field { display: block; margin: 0.5rem 0; }
+.ed-field > span { display: block; margin-bottom: 0.15rem; font-size: 0.82rem; font-weight: bold; opacity: 0.85; }
+.ed-choice { margin: 0.6rem 0; padding: 0.5rem 0.7rem 0.7rem; border: 1px dashed #8a6a3b; border-radius: 6px; background: rgba(255, 250, 235, 0.35); }
+.ed-choice-head { display: flex; justify-content: space-between; align-items: center; }
+.ed-effects, .ed-cond { margin: 0.5rem 0; }
+.ed-effect { margin: 0.25rem 0; }
+.ed-scene-actions { margin-top: 1rem; }
+.illu-preview { max-width: 240px; margin: 0.3rem 0 0.6rem; border: 1px solid #8a6a3b; border-radius: 4px; overflow: hidden; background: radial-gradient(ellipse at center, #f1e4bf 40%, #dcc48c 100%); }
+.illu-preview svg { display: block; width: 100%; height: auto; }
+
+input[type="text"], input[type="number"], textarea, select {
+  width: 100%; box-sizing: border-box; padding: 0.35rem 0.5rem; font: inherit; color: var(--ink);
+  background: #f7edd2; border: 1px solid #8a6a3b; border-radius: 4px;
+}
+textarea { resize: vertical; }
+input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 3px solid var(--gold); outline-offset: 1px; }
+input[type="file"] { color: var(--ink); }
+
+.issues { list-style: none; margin: 0; padding: 0; }
+.issues li { margin: 0.3rem 0; font-size: 0.92rem; }
+.issues li.error { color: var(--blood); }
+.issues li.ok { color: var(--moss); font-weight: bold; }
+
+/* ---------- L'arbre des choix ---------- */
+.graph-scroll {
+  overflow: auto; max-height: 72vh; border: 1px solid #8a6a3b; border-radius: 6px;
+  background: radial-gradient(ellipse at center, #f1e4bf 40%, #dcc48c 100%); box-shadow: inset 0 0 22px rgba(120, 80, 30, 0.45);
+}
+svg.graph { display: block; font-family: var(--serif); }
+.g-node { cursor: pointer; }
+.g-node rect { fill: #f7ecc9; stroke: var(--ink); stroke-width: 1.6; }
+.g-node.g-victory rect { fill: #d3e2b8; }
+.g-node.g-defeat rect { fill: #ebbeb0; }
+.g-node.g-neutral rect { fill: #e4d4ae; }
+.g-node.g-start rect { stroke: var(--blood); stroke-width: 2.8; }
+.g-node.g-lost rect { stroke: var(--blood); stroke-dasharray: 5 3; opacity: 0.85; }
+.g-node.g-dead .g-id { fill: var(--blood); }
+.g-node:hover rect { filter: brightness(1.05); }
+.g-node:focus-visible { outline: none; }
+.g-node:focus-visible rect { stroke: #b8860b; stroke-width: 3; }
+.g-node.g-selected rect { stroke: #b8860b; stroke-width: 4.5; stroke-dasharray: none; filter: drop-shadow(0 0 5px rgba(209, 169, 53, 0.95)); }
+.g-id { font-size: 12px; font-weight: bold; fill: var(--ink); pointer-events: none; }
+.g-ex { font-size: 10px; fill: #5a4630; pointer-events: none; }
+.g-edge path { fill: none; stroke: var(--ink); stroke-width: 1.6; opacity: 0.8; }
+.g-edge.g-success path { stroke: var(--moss); stroke-dasharray: 7 3; }
+.g-edge.g-failure path { stroke: var(--blood); stroke-dasharray: 7 3; }
+.g-edge.g-cond path { stroke-dasharray: 1 4; stroke-linecap: round; stroke-width: 2.4; }
+.g-edge.g-back path { opacity: 0.6; }
+.g-edge text { font-size: 10px; fill: var(--ink); paint-order: stroke; stroke: #efe0b6; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.g-arrow { fill: var(--ink); }
+.grow { flex: 1; }
+
+.ed-effects > strong { display: block; margin-bottom: 0.2rem; }

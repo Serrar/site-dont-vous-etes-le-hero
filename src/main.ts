@@ -1,86 +1,108 @@
+// ============================================================================
+// main.ts : point d'entrée. Il assemble les pièces et gère quel écran est affiché :
+//   - le menu principal (choix d'une aventure, accès à l'atelier),
+//   - l'écran de jeu,
+//   - l'atelier du scribe (éditeur).
+// ============================================================================
+
+import "./style.css"; // Vite injecte la feuille de style dans la page
 import { createBundledSource } from "./catalog/bundled.ts";
-import { Game, defaultCharacter } from "./engine/engine.ts";
-import { mulberry32 } from "./engine/rng.ts";
+import { createLocalSource, createMemoryStorage } from "./catalog/local.ts";
+import type { StorageLike } from "./catalog/local.ts";
+import { createCompositeSource } from "./catalog/source.ts";
+import type { CampaignMeta } from "./catalog/source.ts";
 import type { Campaign } from "./engine/types.ts";
+import { createEditor } from "./editor/editor.ts";
+import { byId, clear, el, put } from "./ui/dom.ts";
+import { createGameScreen } from "./ui/game.ts";
 
-const $ = (id: string) => document.getElementById(id)!;
-
-// Seule ligne à changer pour brancher une autre origine de campagnes (éditeur, API...).
-const source = createBundledSource();
+type Screen = "menu" | "game" | "editor";
 
 const params = new URLSearchParams(location.search);
-const seed = params.get("seed"); // ?seed=N : dés déterministes
-let campaign: Campaign;
-let game: Game;
 
-async function showMenu() {
-  $("game").hidden = true;
-  $("menu").hidden = false;
-  const list = $("campaign-list");
-  list.replaceChildren();
-  for (const meta of await source.list()) {
-    const b = document.createElement("button");
-    b.dataset.testid = `campaign-card-${meta.id}`;
-    const title = document.createElement("strong");
-    title.textContent = meta.title;
-    const desc = document.createElement("span");
-    desc.textContent = meta.description ?? "";
-    b.append(title, document.createElement("br"), desc);
-    b.onclick = () => void startCampaign(meta.id);
-    list.append(b);
+// Certains navigateurs (mode privé, cookies bloqués) interdisent localStorage :
+// dans ce cas on se rabat sur une mémoire temporaire (les brouillons seront perdus à la fermeture).
+function pickStorage(): StorageLike {
+  try {
+    return window.localStorage;
+  } catch {
+    return createMemoryStorage();
   }
 }
 
-async function startCampaign(id: string) {
-  const found = await source.get(id);
-  if (!found) return showMenu(); // identifiant inconnu : retour au menu
-  campaign = found;
-  restart();
-  $("menu").hidden = true;
-  $("game").hidden = false;
+// Les sources de campagnes : celles livrées avec le projet + les brouillons de l'utilisateur.
+const bundled = createBundledSource();
+const local = createLocalSource(pickStorage());
+const all = createCompositeSource([bundled, local]);
+
+const game = createGameScreen(params.get("seed")); // ?seed=N : dés déterministes (tests)
+
+const editor = createEditor({
+  root: byId("editor"),
+  bundled,
+  local,
+  onExit: () => void showMenu(),
+  // Tester depuis l'éditeur : on lance la partie, et « retour » ramène dans l'éditeur.
+  onPlay: (campaign) => {
+    show("game");
+    game.start(campaign, {
+      backLabel: "← Retour à l'éditeur",
+      onBack: () => {
+        show("editor");
+        editor.resume();
+      },
+    });
+  },
+});
+
+/** Affiche un écran et masque les autres. */
+function show(screen: Screen): void {
+  for (const name of ["menu", "game", "editor"] as Screen[]) byId(name).hidden = name !== screen;
+  // L'éditeur a besoin de plus de largeur que le jeu.
+  document.querySelector("main")!.classList.toggle("wide", screen === "editor");
 }
 
-function restart() {
-  const rng = seed !== null ? mulberry32(Number(seed)) : Math.random;
-  // Point d'extension : ici on pourra passer un personnage conservé d'une campagne à l'autre.
-  game = new Game(campaign, defaultCharacter, rng);
-  $("roll").textContent = "";
-  render();
+/** Une carte cliquable dans la liste des aventures. */
+function campaignCard(meta: CampaignMeta): HTMLElement {
+  return el(
+    "button",
+    { "data-testid": `campaign-card-${meta.id}`, onclick: () => void playById(meta.id) },
+    el("strong", {}, meta.title),
+    meta.origin === "local" ? el("span", { class: "badge" }, "brouillon") : null,
+    el("br"),
+    el("span", {}, meta.description ?? ""),
+  );
 }
 
-function render() {
-  const { character } = game.state;
-  $("title").textContent = campaign.title;
-  $("sheet").textContent =
-    `${character.name} — PV ${character.hp} | Force ${character.stats.force} | ` +
-    `Habileté ${character.stats.habilete} | Chance ${character.stats.chance} | ` +
-    `Inventaire : ${character.inventory.join(", ") || "vide"}`;
-  $("scene-text").textContent = game.scene.text;
+async function showMenu(): Promise<void> {
+  const metas = await all.list();
+  const library = metas.filter((m) => m.origin !== "local");
+  const drafts = metas.filter((m) => m.origin === "local");
 
-  const choicesEl = $("choices");
-  choicesEl.replaceChildren();
-  for (const { index, choice } of game.availableChoices()) {
-    const b = document.createElement("button");
-    b.textContent = choice.text;
-    b.dataset.testid = `choice-${index}`;
-    b.onclick = () => {
-      const r = game.choose(index);
-      $("roll").textContent = r.roll !== undefined ? `Dé : ${r.roll} — ${r.success ? "réussite" : "échec"}` : "";
-      render();
-    };
-    choicesEl.append(b);
-  }
+  const list = byId("campaign-list");
+  clear(list);
+  put(list, library.map(campaignCard));
 
-  const ending = game.scene.ending;
-  $("ending").hidden = !ending;
-  $("ending").textContent = ending?.title ?? "";
-  $("ending").dataset.type = ending?.type ?? "";
-  $("restart").hidden = !ending;
+  const draftList = byId("draft-list");
+  clear(draftList);
+  put(draftList, drafts.map(campaignCard));
+  byId("drafts-title").hidden = drafts.length === 0;
+
+  show("menu");
 }
 
-$("restart").onclick = restart;
-$("back").onclick = () => void showMenu();
+async function playById(id: string): Promise<void> {
+  const campaign: Campaign | undefined = await all.get(id);
+  if (!campaign) return showMenu(); // identifiant inconnu : retour au menu
+  game.start(campaign, { onBack: () => void showMenu() });
+  show("game");
+}
 
-// ?campaign=<id> : accès direct à une aventure (pratique pour les tests e2e)
+byId("open-editor").onclick = () => {
+  show("editor");
+  void editor.open();
+};
+
+// ?campaign=<id> : accès direct à une aventure (pratique pour les tests automatisés)
 const direct = params.get("campaign");
-void (direct ? startCampaign(direct) : showMenu());
+void (direct ? playById(direct) : showMenu());

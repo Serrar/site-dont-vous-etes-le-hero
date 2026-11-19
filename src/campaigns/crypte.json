@@ -7,6 +7,7 @@
   "deathScene": "mort",
   "scenes": {
     "start": {
+      "illustration": "crypt-entrance",
       "text": "Tu te tiens devant l'entrée d'une crypte oubliée. Une porte massive est entrouverte ; sur le côté, la pierre semble moins bien jointe.",
       "choices": [
         { "text": "Entrer par la porte principale", "to": "hall" },
@@ -14,6 +15,7 @@
       ]
     },
     "hall": {
+      "illustration": "hall",
       "text": "Un hall poussiéreux. Une torche pend encore à un mur. Au fond, un couloir plonge dans le noir.",
       "choices": [
         { "text": "Ramasser la torche", "to": "torche" },
@@ -21,16 +23,19 @@
       ]
     },
     "torche": {
+      "illustration": "torch",
       "text": "Tu allumes la torche. Les murs révèlent d'anciennes gravures.",
       "onEnter": [{ "type": "addItem", "item": "torche" }],
       "choices": [{ "text": "Poursuivre dans le couloir", "to": "couloir" }]
     },
     "passage": {
+      "illustration": "secret-passage",
       "text": "Derrière la pierre, un passage étroit. Dans une niche, une clé ancienne.",
       "onEnter": [{ "type": "addItem", "item": "cle_ancienne" }],
       "choices": [{ "text": "Rejoindre le couloir", "to": "couloir" }]
     },
     "couloir": {
+      "illustration": "corridor",
       "text": "Un long couloir. Un escalier descend dans l'ombre, une porte scellée barre le fond, et un gardien de pierre veille.",
       "choices": [
         { "text": "Descendre l'escalier avec ta torche", "to": "escalier", "condition": { "type": "item", "item": "torche" } },
@@ -39,10 +44,12 @@
       ]
     },
     "escalier": {
+      "illustration": "chest",
       "text": "Au bas de l'escalier, un coffre repose sur un autel.",
       "choices": [{ "text": "Ouvrir le coffre", "to": "tresor" }]
     },
     "garde": {
+      "illustration": "guardian",
       "text": "Le gardien de pierre s'anime et barre la route.",
       "choices": [
         { "text": "Attaquer le gardien", "test": { "stat": "force", "difficulty": 8, "onSuccess": "tresor", "onFailure": "mort" } },
@@ -50,14 +57,17 @@
       ]
     },
     "tresor": {
+      "illustration": "victory",
       "text": "Le trésor est à toi. Tu quittes la crypte, riche et vivant.",
       "ending": { "type": "victory", "title": "Fin : le trésor" }
     },
     "fuite": {
+      "illustration": "escape",
       "text": "Tu t'échappes de justesse, les mains vides mais sain et sauf.",
       "ending": { "type": "neutral", "title": "Fin : la fuite" }
     },
     "mort": {
+      "illustration": "skull",
       "text": "Tes forces t'abandonnent. La crypte garde un aventurier de plus.",
       "ending": { "type": "defeat", "title": "Fin : la mort" }
     }

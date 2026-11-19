@@ -1,3 +1,7 @@
+// ============================================================================
+// Outils partagés par les tests (ce n'est pas un test : pas de describe/it ici).
+// ============================================================================
+
 import { Game, defaultCharacter } from "../../src/engine/engine.ts";
 import { mulberry32 } from "../../src/engine/rng.ts";
 import type { Campaign, Character } from "../../src/engine/types.ts";

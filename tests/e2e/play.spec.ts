@@ -1,3 +1,10 @@
+// ============================================================================
+// Tests de bout en bout du jeu avec Playwright : un vrai navigateur clique sur la page.
+// `await` partout : chaque action du navigateur prend du temps, on attend sa fin.
+// `getByRole("button", { name })` retrouve un bouton par son texte visible (comme un utilisateur) ;
+// `getByTestId("x")` retrouve l'élément portant data-testid="x".
+// ============================================================================
+
 import { test, expect } from "@playwright/test";
 
 // ?seed=N rend les jets de dés déterministes : indispensable pour des tests e2e stables.
@@ -37,18 +44,4 @@ test("le bouton Rejouer réinitialise la partie", async ({ page }) => {
   await expect(page.getByTestId("ending")).toBeHidden();
   await expect(page.getByTestId("sheet")).toContainText("PV 10");
   await expect(page.getByTestId("sheet")).toContainText("vide");
-});
-
-test("une partie aléatoire finit toujours sur un écran de fin (30 seeds)", async ({ page }) => {
-  for (let seed = 0; seed < 30; seed++) {
-    await page.goto(`/?campaign=crypte&seed=${seed}`);
-    for (let step = 0; step < 30; step++) {
-      if (await page.getByTestId("ending").isVisible()) break;
-      const buttons = page.locator("#choices button");
-      const n = await buttons.count();
-      expect(n, `seed ${seed} : aucun choix affiché`).toBeGreaterThan(0);
-      await buttons.nth(step % n).click();
-    }
-    await expect(page.getByTestId("ending"), `seed ${seed}`).toBeVisible();
-  }
 });

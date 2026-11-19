@@ -1,3 +1,4 @@
+// Configuration de Playwright : lance automatiquement le serveur de développement avant les tests de navigateur.
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({

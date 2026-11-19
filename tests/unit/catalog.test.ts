@@ -1,3 +1,8 @@
+// ============================================================================
+// Tests du catalogue des campagnes embarquées (src/catalog).
+// `async () => { await ... }` : test asynchrone, on attend les Promises avec `await`.
+// ============================================================================
+
 import { describe, it, expect } from "vitest";
 import { bundledCampaigns, createBundledSource } from "../../src/catalog/bundled.ts";
 import { createMemorySource } from "../../src/catalog/source.ts";

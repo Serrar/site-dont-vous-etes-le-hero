@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\campaigns",
+    "\\src\\engine",
+    "\\tests",
+    "\\tests\\e2e",
+    "\\tests\\unit"
+  ],
+  "SelectedNode": "\\src\\engine\\validate.ts",
+  "PreviewInSolutionExplorer": false
+}

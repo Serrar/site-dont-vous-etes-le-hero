@@ -1,3 +1,12 @@
+// ============================================================================
+// Tests du moteur de jeu (src/engine/engine.ts).
+// Rappel Vitest : describe regroupe, it décrit un test, expect(...).toBe(...) vérifie.
+// Astuces utilisées ici :
+//  - `() => 0.99` est une « fausse source de hasard » : le dé donne toujours 6 ; `() => 0` donne toujours 1.
+//  - `as Campaign` : on affirme à TypeScript que le JSON importé respecte le type Campaign.
+//  - la fonction `pick` évite de dépendre de la position d'un choix : on le retrouve par son texte.
+// ============================================================================
+
 import { describe, it, expect } from "vitest";
 import campaign from "../../src/campaigns/crypte.json";
 import { Game, defaultCharacter } from "../../src/engine/engine.ts";
